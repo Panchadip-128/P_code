@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Links</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f89d;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: left;
+            background-color: #f8e14b;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgb(247, 3, 3);
+        }
+        .container h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .resume-link {
+            display: block;
+            margin: 10px 0;
+            text-decoration: none;
+            color: #0357b0;
+            font-size: 18px;
+        }
+        .resume-link:hover {
+            text-decoration: underline;
+        }
+
+        span{
+        color:rgb(0, 0, 42);
+}
+
+@media (max-width: 768px) {
+            .container {
+                padding: 30px;
+                max-width: 50%;
+                margin-left: 50px;
+                margin-right: 50px;
+            }
+            .container h1 {
+                font-size: 24px;
+            }
+            .resume-link {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            .container h1 {
+                font-size: 20px;
+            }
+            .resume-link {
+                font-size: 14px;
+            }
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Choose a Resume</h1>
+        <a href="GEN_AI_Res_001.pdf" class="resume-link" target="_blank">Resume 1- <span>Specialized to AI & ML Domain</span></a>
+        <a href="RES_AI-T6.pdf" class="resume-link" target="_blank">Resume 2- <span>Specialized to Generative AI & LLM Development</span></a>
+        <a href="#" class="resume-link" target="_blank">Resume 3- <span>Specialized to Data-Analytics</span></a>
+    </div>
+</body>
+</html>
