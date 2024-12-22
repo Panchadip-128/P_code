@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-import os
 
 app = Flask(__name__)
 
@@ -8,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace this with a more secure key in production
 
 # Setup the SQLite database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/contact.db'  # Use /tmp directory for writable DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking for performance
 
 # Initialize the database object
@@ -22,10 +21,6 @@ class Contact(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     contact_number = db.Column(db.String(20))
     message = db.Column(db.Text, nullable=False)
-
-# Create the tables if they don't exist
-with app.app_context():
-    db.create_all()  # This creates the table
 
 # Home route to handle form submission and display the form
 @app.route("/", methods=["GET", "POST"])
@@ -60,7 +55,6 @@ def submit():
 
     return render_template("index.html")  # Render the form page
 
-
 @app.route("/view_messages")
 def view_messages():
     # Fetch all messages from the Contact model
@@ -71,8 +65,5 @@ def view_messages():
 def download_cv():
     return render_template('index1.html')  # Render the index1.html template
 
-
 if __name__ == "__main__":
     app.run(debug=True)  # Run the app in debug mode for development
-
-
