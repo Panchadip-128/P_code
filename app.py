@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 
 # Set the secret key for Flask's session management (important for flash messages)
 app.secret_key = 'your_secret_key'  # Replace this with a more secure key in production
 
-# Setup the SQLite database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
+# Setup the SQLite database URI to use the /tmp directory (writable in Vercel)
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join('/tmp', 'contact.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking for performance
 
 # Initialize the database object
