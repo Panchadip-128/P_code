@@ -7,8 +7,8 @@ app = Flask(__name__)
 # Set the secret key for Flask's session management (important for flash messages)
 app.secret_key = 'your_secret_key'  # Replace this with a more secure key in production
 
-# Setup the SQLite database URI to use the /tmp directory (writable in Vercel)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join('/tmp', 'contact.db')}"
+# Setup the SQLite database URI
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/contact.db'  # Use /tmp directory for writable DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking for performance
 
 # Initialize the database object
@@ -22,6 +22,10 @@ class Contact(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     contact_number = db.Column(db.String(20))
     message = db.Column(db.Text, nullable=False)
+
+# Create the tables if they don't exist
+with app.app_context():
+    db.create_all()  # This creates the table
 
 # Home route to handle form submission and display the form
 @app.route("/", methods=["GET", "POST"])
@@ -70,4 +74,5 @@ def download_cv():
 
 if __name__ == "__main__":
     app.run(debug=True)  # Run the app in debug mode for development
+
 
