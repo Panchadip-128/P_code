@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 
@@ -7,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace this with a more secure key in production
 
 # Setup the SQLite database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contact.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/contact.db'  # Use /tmp directory for writable DB
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking for performance
 
 # Initialize the database object
@@ -21,6 +22,13 @@ class Contact(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     contact_number = db.Column(db.String(20))
     message = db.Column(db.Text, nullable=False)
+
+# Create the tables if they don't exist
+try:
+    with app.app_context():
+        db.create_all()  # Create the tables
+except Exception as e:
+    print(f"Error creating tables: {str(e)}")  # Log the error for debugging
 
 # Home route to handle form submission and display the form
 @app.route("/", methods=["GET", "POST"])
@@ -41,7 +49,7 @@ def submit():
             contact_number=contact_number,
             message=message
         )
-        
+
         # Add to the database and commit
         try:
             db.session.add(new_contact)
@@ -50,20 +58,28 @@ def submit():
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", "error")
-        
+
         return redirect("/")  # Redirect to the same page after form submission
 
     return render_template("index.html")  # Render the form page
 
+
 @app.route("/view_messages")
 def view_messages():
     # Fetch all messages from the Contact model
-    contacts = Contact.query.all()  # This retrieves all contact submissions
+    try:
+        contacts = Contact.query.all()  # This retrieves all contact submissions
+    except Exception as e:
+        flash(f"Error fetching messages: {str(e)}", "error")
+        contacts = []
+
     return render_template("view_messages.html", contacts=contacts)
 
 @app.route('/download_cv')
 def download_cv():
     return render_template('index1.html')  # Render the index1.html template
 
+
 if __name__ == "__main__":
     app.run(debug=True)  # Run the app in debug mode for development
+
