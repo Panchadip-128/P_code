@@ -1,0 +1,24 @@
+<!-- messages.html -->
+<h2>Messages Received</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Contact Number</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for message in messages %}
+            <tr>
+                <td>{{ message.name }}</td>
+                <td>{{ message.email }}</td>
+                <td>{{ message.subject }}</td>
+                <td>{{ message.message }}</td>
+                <td>{{ message.contact_number }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
