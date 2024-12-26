@@ -10,7 +10,7 @@ app.secret_key = 'your_secret_key'
 
 # Database URI (consider using environment variables for deployment)
 # Adjust the path based on your project structure and database choice
-DATABASE_URI = os.path.join(os.getcwd(), 'data', 'contact.db')
+DATABASE_URI = os.path.join(os.getcwd(), 'tmp', 'contact.db')
 # DATABASE_URI = os.environ.get('DATABASE_URL')  # If using environment variable
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_URI}'
