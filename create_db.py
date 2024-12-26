@@ -8,7 +8,7 @@ cursor = conn.cursor()
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS contact (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    full_name TEXT NOT NULL,
+    name TEXT NOT NULL,
     email TEXT NOT NULL,
     subject TEXT NOT NULL,
     contact_number TEXT,
