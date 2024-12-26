@@ -4,8 +4,6 @@ import os
 
 # Flask app setup
 app = Flask(__name__)
-
-# Secret key for session management
 app.secret_key = 'your_secret_key'
 
 # Create the tmp directory if it doesn't exist
@@ -28,19 +26,22 @@ class Contact(db.Model):
     contact_number = db.Column(db.String(20))
     message = db.Column(db.Text, nullable=False)
 
+# Drop and recreate all tables
+with app.app_context():
+    db.drop_all()  # This will drop all existing tables
+    db.create_all()  # This will create new tables with the correct schema
+
 # Routes
 @app.route("/", methods=["GET", "POST"])
 def submit():
     if request.method == "POST":
         try:
-            # Collect form data
             name = request.form['name']
             email = request.form['email']
             subject = request.form['subject']
             contact_number = request.form.get('contact_number', '')
             message = request.form['message']
             
-            # Create a new Contact instance
             new_contact = Contact(
                 name=name,
                 email=email,
@@ -49,14 +50,13 @@ def submit():
                 message=message
             )
             
-            # Add to the database and commit
             db.session.add(new_contact)
             db.session.commit()
             flash("Form successfully submitted. We will contact you soon.", "success")
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", "error")
-            print(f"Error details: {str(e)}")  # Added for debugging
+            print(f"Error details: {str(e)}")
         return redirect("/")
     return render_template("index.html")
 
@@ -69,9 +69,28 @@ def view_messages():
 def download_cv():
     return render_template('index1.html')
 
-# Create the database tables
-with app.app_context():
-    db.create_all()
+@app.route("/check_db")
+def check_db():
+    try:
+        # Get the database metadata
+        inspector = db.inspect(db.engine)
+        
+        # Get all table names
+        tables = inspector.get_table_names()
+        
+        # Get columns for the contact table
+        columns = []
+        if 'contact' in tables:
+            columns = [column['name'] for column in inspector.get_columns('contact')]
+        
+        return {
+            'database_uri': DATABASE_URI,
+            'tables': tables,
+            'contact_columns': columns,
+            'exists': os.path.exists(DATABASE_URI)
+        }
+    except Exception as e:
+        return {'error': str(e)}
 
 if __name__ == "__main__":
     app.run(debug=True)
