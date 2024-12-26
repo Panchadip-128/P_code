@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
-# Contact model
+# Contact model (with the name column)
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -28,7 +28,9 @@ class Contact(db.Model):
 
 # Create tables if they don't exist (outside of app context)
 with app.app_context():
-    db.create_all()  # Only create tables, don't drop existing ones
+    # Use Alembic for schema migrations in production (recommended)
+    # For development, uncomment the following line to create tables on startup
+    # db.create_all()
 
 # Routes
 @app.route("/", methods=["GET", "POST"])
@@ -40,7 +42,7 @@ def submit():
             subject = request.form['subject']
             contact_number = request.form.get('contact_number', '')
             message = request.form['message']
-            
+
             new_contact = Contact(
                 name=name,
                 email=email,
@@ -48,7 +50,7 @@ def submit():
                 contact_number=contact_number,
                 message=message
             )
-            
+
             db.session.add(new_contact)
             db.session.commit()
             flash("Form successfully submitted. We will contact you soon.", "success")
@@ -73,15 +75,15 @@ def check_db():
     try:
         # Get the database metadata
         inspector = db.inspect(db.engine)
-        
+
         # Get all table names
         tables = inspector.get_table_names()
-        
+
         # Get columns for the contact table
         columns = []
         if 'contact' in tables:
             columns = [column['name'] for column in inspector.get_columns('contact')]
-        
+
         return {
             'database_uri': DATABASE_URI,
             'tables': tables,
