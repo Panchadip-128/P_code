@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace this with a more secure key in production
 
 # Setup the SQLite database URI to point to the current working directory for local development
-DATABASE_URI = os.path.join(os.getcwd(), 'contact.db')  # Use current working directory
+DATABASE_URI = os.path.join('/tmp', 'contact.db')  # Use /tmp directory for Vercel
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_URI}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking for performance
 
@@ -23,6 +23,11 @@ class Contact(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     contact_number = db.Column(db.String(20))
     message = db.Column(db.Text, nullable=False)
+
+# Ensure that the table is created at the start of the app
+@app.before_first_request
+def create_tables():
+    db.create_all()  # Create the tables if they do not exist
 
 # Home route to handle form submission and display the form
 @app.route("/", methods=["GET", "POST"])
