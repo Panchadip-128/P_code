@@ -25,8 +25,7 @@ class Contact(db.Model):
     message = db.Column(db.Text, nullable=False)
 
 # Ensure that the table is created at the start of the app
-@app.before_first_request
-def create_tables():
+with app.app_context():
     db.create_all()  # Create the tables if they do not exist
 
 # Home route to handle form submission and display the form
@@ -73,6 +72,5 @@ def download_cv():
     return render_template('index1.html')  # Render the index1.html template
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()  # Create the tables
     app.run(debug=True)
+
